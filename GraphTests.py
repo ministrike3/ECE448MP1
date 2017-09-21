@@ -70,13 +70,13 @@ def find_path_dfs(maze,start,goal):
             stack.append((path + direction, neighbour))
     return "NO WAY!"
 
-def heuristic(cell, goal):
+def manhattan_distance_heuristic(cell, goal):
     return abs(cell[0] - goal[0]) + abs(cell[1] - goal[1])
 
 
 def find_path_astar(maze,start,goal):
     pr_queue = []
-    heappush(pr_queue, (0 + heuristic(start, goal), 0, "", start))
+    heappush(pr_queue, (0 + manhattan_distance_heuristic(start, goal), 0, "", start))
     visited = set()
     graph = maze
     while pr_queue:
@@ -87,7 +87,7 @@ def find_path_astar(maze,start,goal):
             continue
         visited.add(current)
         for direction, neighbour in graph[current]:
-            heappush(pr_queue, (cost + heuristic(neighbour, goal), cost + 1,
+            heappush(pr_queue, (cost + manhattan_distance_heuristic(neighbour, goal), cost + 1,
                                 path + direction, neighbour))
     return "NO WAY!"
 
