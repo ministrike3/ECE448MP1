@@ -1,2 +1,2 @@
-# ECE408MP1
+# ECE448MP1
 MazeSolver
