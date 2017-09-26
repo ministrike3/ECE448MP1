@@ -31,10 +31,10 @@ def find_goals_position(maze):
     for line in maze:
         for item in line:
             if item == '.':
-                p_index = line.index('.')
+                dot_index = line.index('.')
                 line_index = maze.index(line)
-                maze[line_index][p_index] = ' '
-                list_of_goals.append((line_index, p_index))
+                maze[line_index][dot_index] = ' '
+                list_of_goals.append((line_index, dot_index))
     return list_of_goals
 
 
@@ -99,6 +99,25 @@ def find_path_astar(graph, start, goal):
             heappush(pr_queue, (cost + manhattan_distance_heuristic(neighbour, goal), cost + 1,
                                 path + direction, neighbour))
     return "NO WAY!", len(visited)
+
+def find_path_greedy(graph, start, goal):
+    def manhattan_distance_heuristic(cell, goal):
+        return abs(cell[0] - goal[0]) + abs(cell[1] - goal[1])
+    pr_queue = []
+    heappush(pr_queue, (0 + manhattan_distance_heuristic(start, goal), 0, "", start))
+    visited = set()
+    while pr_queue:
+        _, cost, path, current = heappop(pr_queue)
+        if current == goal:
+            return path, len(visited)
+        if current in visited:
+            continue
+        visited.add(current)
+        for direction, neighbour in graph[current]:
+            heappush(pr_queue, (manhattan_distance_heuristic(neighbour, goal), cost + 1,
+                                path + direction, neighbour))
+    return "NO WAY!", len(visited)
+
 
 
 def print_solved_maze(start, maze, solution, goals, expanded_nodes, file):
@@ -166,5 +185,12 @@ if __name__ == "__main__":
         #print(solution)
         #print(expanded_nodes)
         file_name = './Outputs/1dot/Astar/' + name + '.txt'
+        print(file_name)
+        print_solved_maze(start, maze, solution, goals, expanded_nodes, file_name)
+
+        solution, expanded_nodes = find_path_greedy(graph, start, goals[0])
+        # print(solution)
+        # print(expanded_nodes)
+        file_name = './Outputs/1dot/Greedy/' + name + '.txt'
         print(file_name)
         print_solved_maze(start, maze, solution, goals, expanded_nodes, file_name)
