@@ -3,8 +3,8 @@ from heapq import heappop, heappush
 import glob
 import copy
 
-def get_list_of_input_files():
-    return(glob.glob("./Inputs/*"))
+def get_list_of_1dot_files():
+    return(glob.glob("./Inputs/1dot/*"))
 
 def input_to_array(file):
     lines = []
@@ -35,9 +35,7 @@ def find_goals_position(maze):
 
 def maze2graph(maze):
     height = len(maze)
-    print(height)
     width = len(maze[0]) if height else 0
-    print(width)
     graph = {(i, j): [] for j in range(width) for i in range(height) if  maze[i][j]==' '}
     for row, col in graph.keys():
         if row < height - 1 and maze[row + 1][col]==' ':
@@ -95,7 +93,7 @@ def find_path_astar(graph,start,goal):
     return "NO WAY!",len(visited)
 
 def print_solved_maze(start,maze,solution,goals,expanded_nodes, file):
-    thefile = open(file, 'w')
+    output_maze = open(file, 'w')
     solved_maze=copy.deepcopy(maze)
     solved_maze[start[0]][start[1]]='P'
     current_node=[start[0],start[1]]
@@ -115,20 +113,20 @@ def print_solved_maze(start,maze,solution,goals,expanded_nodes, file):
             solved_maze[current_node[0]][current_node[1]]='.'
     for row in solved_maze:
         for item in row:
-            thefile.write("%s" % item)
-        thefile.write('\n')
-    thefile.write('Path Cost = ')
-    thefile.write(str(path_cost))
-    thefile.write('\n')
-    thefile.write('Nodes_expanded = ')
-    thefile.write(str(expanded_nodes))
+            output_maze.write("%s" % item)
+        output_maze.write('\n')
+    output_maze.write('Path Cost = ')
+    output_maze.write(str(path_cost))
+    output_maze.write('\n')
+    output_maze.write('Nodes_expanded = ')
+    output_maze.write(str(expanded_nodes))
 
 if __name__ == "__main__":
-    inputs=get_list_of_input_files()
+    inputs=get_list_of_1dot_files()
     for raw_input in inputs:
         maze = input_to_array(raw_input)
         names=raw_input.split('/')
-        name=names[2]
+        name=names[3]
         name,trash=name.split('.')
         print(name)
         #for line in maze:
