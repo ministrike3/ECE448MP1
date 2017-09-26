@@ -31,10 +31,10 @@ def find_goals_position(maze):
     for line in maze:
         for item in line:
             if item == '.':
-                p_index = line.index('P')
+                p_index = line.index('.')
                 line_index = maze.index(line)
                 maze[line_index][p_index] = ' '
-                goals.append((line_index, p_index))
+                list_of_goals.append((line_index, p_index))
     return list_of_goals
 
 
@@ -151,20 +151,20 @@ if __name__ == "__main__":
         solution, expanded_nodes = find_path_bfs(graph, start, goals[0])
         #print(solution)
         #print(expanded_nodes)
-        file_name = './outputs/1dot/BFS/' + name + '.txt'
+        file_name = './Outputs/1dot/BFS/' + name + '.txt'
         print(file_name)
         print_solved_maze(start, maze, solution, goals, expanded_nodes, file_name)
 
         solution, expanded_nodes = find_path_dfs(graph, start, goals[0])
         # print(solution)
         # print(expanded_nodes)
-        file_name = './outputs/1dot/DFS/' + name + '.txt'
+        file_name = './Outputs/1dot/DFS/' + name + '.txt'
         print(file_name)
         print_solved_maze(start, maze, solution, goals, expanded_nodes, file_name)
 
-        solution, expanded_nodes = find_path_bfs(graph, start, goals[0])
+        solution, expanded_nodes = find_path_astar(graph, start, goals[0])
         #print(solution)
         #print(expanded_nodes)
-        file_name = './outputs/1dot/Astar/' + name + '.txt'
+        file_name = './Outputs/1dot/Astar/' + name + '.txt'
         print(file_name)
         print_solved_maze(start, maze, solution, goals, expanded_nodes, file_name)
