@@ -16,20 +16,21 @@ def find_starting_position(maze):
                 lineIndex = maze.index(line)
                 maze[lineIndex][pIndex]=' '
                 return(lineIndex,pIndex)
-def find_goal_position(maze):
+
+def find_goals_position(maze):
+    goals=[]
     for line in maze:
         for item in line:
             if item=='.':
                 pIndex=line.index('.')
                 lineIndex = maze.index(line)
                 maze[lineIndex][pIndex]=' '
-                return(lineIndex,pIndex)
+                goals.append((lineIndex,pIndex))
+    return(goals)
 
 def maze2graph(maze):
     height = len(maze)
-    print(height)
     width = len(maze[0]) if height else 0
-    print(width)
     graph = {(i, j): [] for j in range(width) for i in range(height) if  maze[i][j]==' '}
     for row, col in graph.keys():
         if row < height - 1 and maze[row + 1][col]==' ':
@@ -40,25 +41,25 @@ def maze2graph(maze):
             graph[(row, col + 1)].append(("W", (row, col)))
     return graph
 
-def find_path_bfs(maze,start,goal):
+def find_path_bfs(graph,start,goal):
     queue = deque([("", start)])
+    node_counter=1
     visited = set()
-    graph = maze
     while queue:
         path, current = queue.popleft()
         if current == goal:
-            return path
+            return path,node_counter
         if current in visited:
             continue
         visited.add(current)
         for direction, neighbour in graph[current]:
             queue.append((path + direction, neighbour))
-    return "NO WAY!"
+            node_counter+=1
+    return "NO WAY!",node_counter
 
-def find_path_dfs(maze,start,goal):
+def find_path_dfs(graph,start,goal):
     stack = deque([("", start)])
     visited = set()
-    graph=maze
     while stack:
         path, current = stack.pop()
         if current == goal:
@@ -70,15 +71,12 @@ def find_path_dfs(maze,start,goal):
             stack.append((path + direction, neighbour))
     return "NO WAY!"
 
-def manhattan_distance_heuristic(cell, goal):
-    return abs(cell[0] - goal[0]) + abs(cell[1] - goal[1])
-
-
-def find_path_astar(maze,start,goal):
+def find_path_astar(graph,start,goal):
+    def manhattan_distance_heuristic(cell, goal):
+        return abs(cell[0] - goal[0]) + abs(cell[1] - goal[1])
     pr_queue = []
     heappush(pr_queue, (0 + manhattan_distance_heuristic(start, goal), 0, "", start))
     visited = set()
-    graph = maze
     while pr_queue:
         _, cost, path, current = heappop(pr_queue)
         if current == goal:
@@ -91,17 +89,56 @@ def find_path_astar(maze,start,goal):
                                 path + direction, neighbour))
     return "NO WAY!"
 
+def print_solved_maze(start,maze,solution,goals):
+    thefile = open('./outputs/maze.txt', 'w')
+    solved_maze=maze
+    solved_maze[start[0]][start[1]]='P'
+    current_node=[start[0],start[1]]
+    path_cost=len(solution)
+    for letter in solution:
+        if letter=='E':
+            current_node[1]+=1
+            solved_maze[current_node[0]][current_node[1]]='.'
+        if letter=='W':
+            current_node[1]-=1
+            solved_maze[current_node[0]][current_node[1]]='.'
+        if letter=='S':
+            current_node[0]+=1
+            solved_maze[current_node[0]][current_node[1]]='.'
+        if letter=='N':
+            current_node[0]-=1
+            solved_maze[current_node[0]][current_node[1]]='.'
+    for row in solved_maze:
+        for item in row:
+            thefile.write("%s" % item)
+        thefile.write('\n')
+    thefile.write(str(path_cost))
+
+
+
+
+
+
+
 if __name__ == "__main__":
     medium_maze = input_to_array('./Inputs/mediumMaze.txt')
     for line in medium_maze:
         print(line)
+
     start = find_starting_position(medium_maze)
-    goal = find_goal_position(medium_maze)
+
+    goals = find_goals_position(medium_maze)
+
     graph = maze2graph(medium_maze)
-    print(graph)
-    x=find_path_bfs(graph,start,goal)
-    print(x)
-    x=find_path_dfs(graph,start,goal)
-    print(x)
-    x = find_path_astar(graph, start, goal)
-    print(x)
+    #print(graph)
+
+    solution,expanded_nodes=find_path_bfs(graph,start,goals[0])
+    print(solution)
+    print(expanded_nodes)
+    print_solved_maze(start,medium_maze,solution,goals)
+
+    #solution=find_path_dfs(graph,start,goals[0])
+    #print(solution)
+
+    #solution = find_path_astar(graph, start, goals[0])
+    #print(solution)
