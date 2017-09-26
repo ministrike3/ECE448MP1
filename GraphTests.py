@@ -1,6 +1,7 @@
 from collections import deque
 from heapq import heappop, heappush
 import glob
+import copy
 
 def get_list_of_input_files():
     return(glob.glob("./Inputs/*"))
@@ -95,7 +96,7 @@ def find_path_astar(graph,start,goal):
 
 def print_solved_maze(start,maze,solution,goals,expanded_nodes, file):
     thefile = open(file, 'w')
-    solved_maze=maze
+    solved_maze=copy.deepcopy(maze)
     solved_maze[start[0]][start[1]]='P'
     current_node=[start[0],start[1]]
     path_cost=len(solution)
