@@ -146,7 +146,7 @@ def print_solved_maze(start, maze, solution, goals, expanded_nodes, file):
     output_maze.write('Path Cost = ')
     output_maze.write(str(path_cost))
     output_maze.write('\n')
-    output_maze.write('Nodes_expanded = ')
+    output_maze.write('The Number of Nodes Expanded = ')
     output_maze.write(str(expanded_nodes))
 
 
