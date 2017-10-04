@@ -22,4 +22,4 @@
 %P..  %       %.............%         %     %           %   %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Path Cost = 178
-The Number of Nodes Expanded = 250
+The Number of Nodes Expanded = 250Seconds Used = 0.0019822120666503906
