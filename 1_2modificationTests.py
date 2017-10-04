@@ -14,12 +14,11 @@ class Node:
 
 
 def neil_hash(coordinates,goals):
-    #word = str(coordinates[0] ** 3) + str(coordinates[1] ** 3) + str(len(goals))
     word= str(coordinates[0] * 1000 + coordinates[1])
     goalstring = ''
     for goal in goals:
         goalstring += (str(goal[0]) + str(goal[1]))
-    word += goalstring
+        word += goalstring
     return word
 
 
@@ -109,6 +108,7 @@ def print_solved_maze(start, maze, solution, goals, expanded_nodes, file, time):
     output_maze.write('\n')
     output_maze.write('The Number of Nodes Expanded = ')
     output_maze.write(str(expanded_nodes))
+    output_maze.write('\n')
     output_maze.write('Seconds Used = ')
     output_maze.write(str(time))
 
@@ -284,30 +284,41 @@ def find_path_astar_multi(graph, start, goal_input):
             d=min(manhattan_distance(start, max_pair[0]),manhattan_distance(start, max_pair[1]))
             return(max_distance+d)
 
-    #heuristic(start,goals)
-    state = set(goal_input)
+    # states is a duplicate of goalinput
+    states=list(goal_input)
+    #declare a hashmap for all the nodes that are going to be created
+    nodes_hash={}
+    #this sequence creates a unique hash based on the coordinates,the number of remaining goals, and the goals
+    name = neil_hash(start,states)
+    #Create the initial starting node and initialize it with a cost 0 and a blank path
+    nodes_hash[name] = Node(start, 0, '', states)
+    #print(nodes_hash[name])
+    #print(name)
+
     pr_queue = []
-    heappush(pr_queue, (0 + heuristic(start, state), 0, "", start,state))
+    heappush(pr_queue, (0 + heuristic(start, goal_input),name ))
     visited = set()
     while pr_queue:
-        _, cost, path, current,goals_left = heappop(pr_queue)
-        goals_targeted=list(goals_left)
-        if current in goals_targeted:
-            goals_targeted.remove(current)
-            #    print('GOAL')
+        _, node_name = heappop(pr_queue)
+        current_node = nodes_hash[node_name]
+        goals_targeted=list(current_node.goals)
+        if current_node.coords in goals_targeted:
+            goals_targeted.remove(current_node.coords)
 
         if len(goals_targeted) == 0:
-            return path, len(visited)
+            return current_node.path, len(visited)
 
-        if (current, frozenset(goals_targeted)) in visited:
-            # print('Already In Visited')
-            # print(visited)
+        if (node_name) in visited:
             continue
 
         goals = list(goals_targeted)
-        visited.add((current, frozenset(goals)))
-        for direction, neighbour in graph[current]:
-            heappush(pr_queue, (cost + heuristic(neighbour, goals), cost + 1, path + direction, neighbour,goals))
+        visited.add(node_name)
+        for direction, neighbor in graph[current_node.coords]:
+            name = neil_hash(neighbor, goals)
+            if name not in nodes_hash:
+                nodes_hash[name] = Node(neighbor, current_node.cost + 1, current_node.path + direction, goals)
+            heappush(pr_queue, (current_node.cost + 1 + heuristic(neighbor, goals), name))
+    return "NO WAY!", len(visited)
 
 
 def find_path_bfs(graph, start, goalinput):
@@ -439,15 +450,15 @@ if __name__ == "__main__":
         print(file_name)
         print_solved_maze(start, maze, solution, initial_goals, expanded_nodes, file_name,end_time-start_time)
 
-        # start_time=time.time()
-        # solution, expanded_nodes = find_path_astar_multinodes(graph, start, initial_goals)
-        # end_time=time.time()
-        # print(end_time-start_time)
-        # print(solution)
-        # print(expanded_nodes)
-        # file_name = './Outputs/Search/Astar/' + name + '.txt'
-        # print(file_name)
-        # print_solved_maze(start, maze, solution, initial_goals, expanded_nodes, file_name,end_time-start_time)
+        start_time=time.time()
+        solution, expanded_nodes = find_path_astar_multi(graph, start, initial_goals)
+        end_time=time.time()
+        print(end_time-start_time)
+        print(solution)
+        print(expanded_nodes)
+        file_name = './Outputs/Search/ASTAR/' + name + '.txt'
+        print(file_name)
+        print_solved_maze(start, maze, solution, initial_goals, expanded_nodes, file_name,end_time-start_time)
 
         # print('New Loop')
         # print('Current Node Coordinates',current_node.coords)
