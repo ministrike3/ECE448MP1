@@ -73,6 +73,7 @@ def find_path_greedy(graph, start, goals):
 
 
 def print_solved_maze(start, maze, solution, goals, expanded_nodes, file, time):
+    nums_alphabet = [1, 2, 3, 4, 5, 6, 7, 8, 9, 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
     output_maze = open(file, 'w')
     solved_maze = copy.deepcopy(maze)
     solved_maze[start[0]][start[1]] = 'P'
@@ -82,15 +83,23 @@ def print_solved_maze(start, maze, solution, goals, expanded_nodes, file, time):
         if letter == 'E':
             current_node[1] += 1
             solved_maze[current_node[0]][current_node[1]] = '.'
+            if  (current_node[0],current_node[1]) in goals:
+                solved_maze[current_node[0]][current_node[1]] = nums_alphabet.pop(0)
         if letter == 'W':
             current_node[1] -= 1
             solved_maze[current_node[0]][current_node[1]] = '.'
+            if  (current_node[0],current_node[1]) in goals:
+                solved_maze[current_node[0]][current_node[1]] = nums_alphabet.pop(0)
         if letter == 'S':
             current_node[0] += 1
             solved_maze[current_node[0]][current_node[1]] = '.'
+            if  (current_node[0],current_node[1]) in goals:
+                solved_maze[current_node[0]][current_node[1]] = nums_alphabet.pop(0)
         if letter == 'N':
             current_node[0] -= 1
             solved_maze[current_node[0]][current_node[1]] = '.'
+            if  (current_node[0],current_node[1]) in goals:
+                solved_maze[current_node[0]][current_node[1]] = nums_alphabet.pop(0)
     for row in solved_maze:
         for item in row:
             output_maze.write("%s" % item)
