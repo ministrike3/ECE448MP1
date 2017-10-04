@@ -8,4 +8,4 @@
 %...   %.%
 %%%%%%%%%%
 Path Cost = 36
-The Number of Nodes Expanded = 14521
+The Number of Nodes Expanded = 7582
